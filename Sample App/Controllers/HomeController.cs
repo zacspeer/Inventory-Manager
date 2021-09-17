@@ -49,9 +49,11 @@ namespace Sample_App.Controllers
                     return Content("500");
                 else
                     return Json(jstreedata, JsonRequestBehavior.AllowGet); //returns JsTree data in Json format
+                //comment added to test github
             }
             catch (Exception ex)
             {
+                var a = 2;
                 AddLog("jsTreeData", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
