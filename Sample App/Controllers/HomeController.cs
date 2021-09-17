@@ -53,7 +53,6 @@ namespace Sample_App.Controllers
             }
             catch (Exception ex)
             {
-                var a = 2;
                 AddLog("jsTreeData", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
