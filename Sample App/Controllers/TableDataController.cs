@@ -32,7 +32,7 @@ namespace Sample_App.Controllers
        public IHttpActionResult Delete(int id)
        {
             if (repo.deleteitem(id))
-                return Ok("Deleted");
+                return Ok("200");
             else
                 return StatusCode(System.Net.HttpStatusCode.InternalServerError); //Ok("InternalServerError: Could not Delete.");
        }

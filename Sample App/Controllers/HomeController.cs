@@ -10,7 +10,6 @@ namespace Sample_App.Controllers
 {
     public class HomeController : Logger
     {
-       
         public ActionResult Index()
         {
             try
@@ -29,7 +28,7 @@ namespace Sample_App.Controllers
             try
             {
                 if (db.additem(item)) //Add item to the db 
-                    return RedirectToAction("Index", "Home");
+                    return Json(HttpStatusCode.Accepted);
                 else
                     return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
@@ -79,7 +78,6 @@ namespace Sample_App.Controllers
                 AddLog("nodeInfo", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
-           
         }
         [HttpPost]
         public ActionResult nodedelete(string data)
@@ -107,11 +105,11 @@ namespace Sample_App.Controllers
 
         [HttpPost]
         public ActionResult Edit(ProductProp data)
-        {
+        { 
             try
             {
                 if (db.UpdateItem(data)) 
-                    return RedirectToAction("Index", "Home");
+                    return Json(HttpStatusCode.Accepted);
                 else
                     return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
@@ -129,7 +127,6 @@ namespace Sample_App.Controllers
             }
             catch (Exception ex)
             {
-
                 AddLog("Search", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }

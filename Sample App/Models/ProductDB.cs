@@ -18,6 +18,7 @@ namespace Sample_App.Models
         {
             connectionstring = ConfigurationManager.ConnectionStrings["NothwindContext"].ConnectionString;
             connection = new SqlConnection(connectionString: connectionstring);
+            
         }
         #endregion Constructor
 
