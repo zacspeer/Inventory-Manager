@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>jsTree test</title>
+    <link rel="stylesheet" href="~/Scripts/DataTables/datatables.min.css" />
+</head>
+<body>
+    <div class="card m-auto shadow bg-light p-3">
+        <div class="card-header bg-light">
+            List of Products
+        </div>
+        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:70vw;">
+            <table id="table_id" class="table table-striped ">
+                <thead>
+                    <tr>
+                        <th>Product asdasds ID</th>
+                        <th>ProductName</th>
+                        <th>UnitPrice</th>
+                        <th>Category</th>
+                        <th>UnitsInStock</th>
+
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</body>
+<script src="~/Scripts/DataTables/datatables.min.js"></script>
+<script>
+    var a = [{ "Column 1": "data 1"}]
+    $(document).ready(function () {
+        $.ajax(
+            {
+                url: "/api/td",
+                dataType: "json",
+                type: "get",
+                success: function (data)
+                {
+                    $('#table_id').DataTable({
+                        data: data,
+                        columns: [
+                            {
+                                "data": "ProductID",
+                                visible: true
+                            },
+                            {   "data": "ProductName"},
+                            { "data": "UnitPrice" },
+                            //{ "data": "UnitsInStock" },
+                            {
+                                "data": "Category"
+                            },
+                        ]
+                    });
+                }
+            });
+       
+    });
+</script>

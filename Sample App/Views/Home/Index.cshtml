@@ -1,0 +1,428 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<head>
+    <title>Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/Scripts/DataTables/datatables.min.css" />
+    <style>
+        .page-item.active .page-link{
+            font-weight: bold;
+            color:black;
+        }
+        .page-link{
+            color:black;
+        }
+        .paginate_button .page-item{
+            text-decoration:black;
+        }
+    </style>
+</head>
+<body>
+    <div class="card m-auto shadow bg-light p-3" style="overflow:auto; max-height:95vh;">
+        <div class="card-header bg-light">
+            <div style="text-align:center; font-weight: bolder; font-size: 22px;"><button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button> List of Products <button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button></div>
+        </div>
+        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:70vw;">
+            <table id="tabl" class="table table-striped table-light table-borderless">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Unit Price</th>
+                        <th>Units in Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableData"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+
+                        <input type="hidden" name="ProductID" value="0" id="ProductID" />
+                        <div class="form-floating mb-auto">
+                            <input type="text" name="ProductName" class="form-control" required />
+                            <label for="Productname" class="fw-bold">Product Name:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input type="number" name="UnitPrice" class="form-control" required />
+                            <label for="Unitprice" class="fw-bold">Unit Price:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input type="number" name="UnitsInStock" class="form-control" required />
+                            <label for="unitsInStock" class="fw-bold">Units In Stock:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input type="number" name="Category" class="form-control" required />
+                            <label for="category" class="fw-bold">Category:</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/Home/Edit" method="post" id="eform">
+                    <div class="modal-body">
+
+                        <input type="hidden" name="ProductID" id="pid" />
+                        <div class="form-floating mb-auto">
+                            <input id="pname" type="text" name="ProductName" class="form-control" required />
+                            <label for="Productname" class="fw-bold">Product Name:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input id="uprice" type="number" name="UnitPrice" class="form-control" required />
+                            <label for="Unitprice" class="fw-bold">Unit Price:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input id="ustock" type="number" name="UnitsInStock" class="form-control" required />
+                            <label for="unitsInStock" class="fw-bold">Units In Stock:</label>
+                        </div>
+                        <br />
+                        <div class="form-floating mb-auto">
+                            <input id="cat" type="number" name="Category" class="form-control" required />
+                            <label for="category" class="fw-bold">Category:</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="esubmit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deletedmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h5 class="modal-title" id="exampleModalLabel">Deleted</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="location.reload()"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        The data has been deleted successfully.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="location.reload()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/DataTables/datatables.min.js"></script>
+</body>
+
+@*<script src="~/Scripts/DataScripts.js"></script>*@
+<script>
+    var baseUrl = "/api/td";
+    var tdata;
+    var pageno;
+    var maxpages;
+    $(function () {
+        console.log($(`Select[name="tabl_length"]`).val());
+        adddata($(`Select[name="tabl_length"]`).val());
+        //$.ajax(
+        //    {
+        //        url:"/api/td",
+        //        type: "get",
+        //        dataType: "json",
+        //        success: function (data) {
+        //            $("#tabl").DataTable(
+        //                {
+        //                    "data": data
+        //                });
+        //        }
+        //    }
+        //);
+        //adddata();
+        //loadpagination();
+    });
+    
+    
+    function adddata(noe) {
+       /* $("#nop,#noplabel").css({ "visibility": "hidden" });*/
+        //$.get(`${baseUrl}`).done((response) => {
+        //    $("#tableData").empty();
+        //    $.each(response, (index, value) => {
+        //        var row = "<tr><td>" + value.ProductID + "</td><td>" + value.ProductName + "</td>" + "<td>" + value.Category + "</td>" + "<td>" + value.UnitPrice + "</td>" + "<td>" + value.UnitsInStock + "</td>" + "<td>";
+        //        row += `<button class='btn btn-sm btn-secondary' id='btnD${index}' onclick='del(${value.ProductID})'>Delete</button>`;
+        //        row += `</td></tr>`;
+        //        $("#tableData").append(row);
+        //    });
+        //    $("#tabl").DataTable();
+        //    $('select[name="tabl_length"]').on("click", function () { console.log("dats: " + $('select[name="tabl_length"]').val()) });
+        //    $(".paginate_button .page-item").css({ "color":"black" });
+        //});
+        if (noe == null) { noe = 10; }
+        
+        if ($.fn.dataTable.isDataTable('#tabl')) {
+            var table = $('#tabl').DataTable();
+
+            //clear datatable
+            table.clear().draw();
+
+            //destroy datatable
+            table.destroy();
+            $.ajax(
+                {
+                    url: "/api/td/" + noe,
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#tabl").DataTable(
+                            {
+                                "autoWidth": false,
+                                "data": data,
+                                "columns": [
+                                    { "data": "ProductID", },
+                                    { "data": "ProductName" },
+                                    { "data": "Category" },
+                                    { "data": "UnitPrice" },
+                                    { "data": "UnitsInStock" },
+                                    {
+                                        "data": "ProductID",
+                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                                    },
+                                ]
+                            });
+                        $('select[name="tabl_length"]').val(noe);
+                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
+                    }
+                });
+        }
+        else 
+        {
+            $.ajax(
+                {
+                    url: "/api/td/" + noe,
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#tabl").DataTable(
+                            {
+                                "autoWidth":false,
+                                "data": data,
+                                "columns": [
+                                    { "data": "ProductID", },
+                                    { "data": "ProductName" },
+                                    { "data": "Category" },
+                                    { "data": "UnitPrice" },
+                                    { "data": "UnitsInStock" },
+                                    {
+                                        "data": "ProductID",
+                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                                    },
+                                ]
+                            });
+                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
+                    }
+                });
+        }
+        
+    }
+    function del(value) {
+        if (confirm("Are you sure you want to Delete?. ")) {
+            $.post(`${baseUrl}/delete/${value}`).done((response) => { $("#deletedmodal").modal('toggle'); });
+            //TODO: add a toast for deleted and an alert : https://getbootstrap.com/docs/5.0/components/toasts/
+            /*$("#jstree")*/
+        }
+    }
+    //function getdata(id) {
+    //    $.post("/home/nodeinfo", { data: id }, function (value) {
+    //        if (value != "") {
+    //            //var row = "<tr><td>" + value.ProductID + "</td><td>" + value.ProductName + "</td>" + "<td>" + value.Category + "</td>" + "<td>" + value.UnitPrice + "</td>" + "<td>" + value.UnitsInStock + "</td>" + "<td>";
+    //            //row += `<button class='btn btn-sm btn-secondary' id='btnD${value.ProductID}' onclick='del(${value.ProductID})'>Delete</button>`;
+    //            //row += `</td></tr>`;
+    //            //$("#tableData").append(row);
+    //            //console.log($("#tabl").html());
+    //            $("#tabl").DataTable({
+    //                "columns": [
+    //                    { "data": "ProductID" },
+    //                    { "data": "ProductName" },
+    //                    { "data": "Category" },
+    //                    { "data": "UnitPrice" },
+    //                    { "data": "UnitsInStock"}
+    //                ]
+    //            });
+    //        }
+    //    });
+    //}
+    function passeddata(sel) {
+        $("#pages").css({ "visibility": "hidden" });
+        document.getElementById("deleteselected").style.visibility = "visible";
+        if (sel == "") {
+            adddata();
+            /*loadpagination();*/
+            $("#pages").css({ "visibility": "" });
+            document.getElementById("deleteselected").style.visibility = "hidden";
+        }
+        else {
+            var table = $('#tabl').DataTable();
+
+            //clear datatable
+            table.clear().draw();
+
+            //destroy datatable
+            table.destroy();
+            //$("#tabl").destroy();
+            $.ajax(
+                {
+                    url: "/home/nodeinfo",
+                    type: "post",
+                    dataType: "json",
+                    data: { data: sel },
+                    success: function (data)
+                    {
+                        console.log(data);
+                        $("#tabl").DataTable({
+                            "data": data,
+                            "columns": [
+                                {"data": "ProductID",},
+                                { "data": "ProductName" },
+                                { "data": "Category" },
+                                { "data": "UnitPrice" },
+                                { "data": "UnitsInStock" },
+                                {
+                                    "data": "ProductID"
+                                    , "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                                },
+                            ]
+                        });
+                    }
+                }
+            );
+        }
+        //$.ajax({
+        //    type:"post",
+        //    url: "/home/nodeinfo",
+        //    data: dat,
+        //    success: function (res) { console.log("Response: " + res); }
+        //});
+    }
+    function edit(id)
+    {
+        $.ajax({
+            url: "/api/td/Edit/" + id,
+            type: "get",
+            dataType: "json",
+            success: function (data)
+            {
+                $("#editModal").modal('toggle');
+                document.getElementById("pid").value = data.ProductID;
+                document.getElementById("pname").value = data.ProductName;
+                document.getElementById("uprice").value = data.UnitPrice;
+                document.getElementById("ustock").value = data.UnitsInStock;
+                document.getElementById("cat").value = data.Category;
+                $("#esubmit").click(function () {
+                    $(`form[id="eform"]`).attr('action', '/Home/Edit');
+                    $(`form[id="eform"]`).submit();
+                });
+            }
+        });
+    }
+    
+    $("#deleteselected").on("click", function () {
+        var a = $('#jstreedemo').jstree("get_selected", true);
+        if (confirm("Are you sure you want to delete all the listed items?")) {
+            $.each(a, function () {
+                console.log("To del: " + this.id);
+                $.post("/home/nodedelete", { data: this.id }, function (value) { console.log("Response from delete: " + value); });
+            });
+            document.getElementById("deleteselected").style.visibility = "hidden";
+            $("#deletedmodal").modal('toggle');
+        }
+        
+    });
+    
+        //function loadpagination()
+    //{
+    //    $("#pages").css({ "visibility": "" });
+    //    $("#nop,#noplabel").css({ "visibility": "" });
+    //    $.get(`${baseUrl}`).done((response) => {
+    //        tdata = response;
+    //        var pgs = (response.length / $("#nop").val()) + 1;
+    //        maxpages = parseInt(pgs);
+    //        loadpagenumbers(pgs);
+    //    });
+    //}
+    //function loadpagenumbers(no) {
+    //    $(`#pages`).empty();
+    //    $(`#pages`).append(`<li class="page-item" onclick="previous()">
+    //        <a class="page-link" href="#" aria-label="Previous" style="color:black;">
+    //            <span aria-hidden="true">&laquo;</span>
+    //            <span class="sr-only"></span>
+    //        </a>
+    //    </li>`);
+    //    for (i = 1; i <= no; i++) {
+    //        $("#pages").append(`<li class="page-item" onclick="loadpage(${i})" ><a class="page-link" href="#" style="color:black;" id="pg${i}">${i}</a></li>`);
+    //    }
+    //    $("#pages").append(`<li class="page-item" onclick="next()"><a class="page-link" href="#" aria-label="Next" style="color:black;">
+    //                        <span aria-hidden="true">&raquo;</span><span class="sr-only"></span></a></li>`);
+    //    $(".page-link").on("click", function () { $(".page-link").css({ "font-weight": "", "border": "", "color": "black", "background-color": "white" }); $(this).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" }); });
+    //    $(`#pg${1}`).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" });
+    //    loadpage(1);
+    //}
+    //function previous() {
+    //    if ((pageno - 1) != 0 && pageno > 0) {
+    //        $(`#pg${pageno - 1}`).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" });
+    //        loadpage(pageno - 1);
+    //    }
+    //    else
+    //    {
+    //        $(`#pg${1}`).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" });
+    //        loadpage(1);
+    //    }
+
+    //}
+    //function next()
+    //{
+    //    if ((pageno + 1) <= maxpages && pageno > 0) {
+    //        $(`#pg${pageno + 1}`).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" });
+    //        loadpage(pageno + 1);
+    //    }
+    //    else {
+    //        $(`#pg${maxpages}`).css({ "background-color": "#335387", "font-weight": "bolder", "color": "white" });
+    //        loadpage(maxpages);
+    //    }
+    //}
+
+    //function loadpage(pgno)
+    //{
+    //    if (pgno <= maxpages && pgno >= 1) {
+    //        pageno = pgno;
+    //        $("#tableData").empty();
+    //        for (i = (pgno * $("#nop").val()) - $("#nop").val(); i <= ((pgno * $("#nop").val()) - 1) && tdata[i] != null; i++) {
+    //            var row = "<tr><td>" + tdata[i].ProductID + "</td><td>" + tdata[i].ProductName + "</td>" + "<td>" + tdata[i].Category + "</td>" + "<td>" + tdata[i].UnitPrice + "</td>" + "<td>" + tdata[i].UnitsInStock + "</td>" + "<td>";
+    //            row += `<button class='btn btn-sm btn-secondary' id='btnD${tdata[i]}' onclick='del(${tdata[i].ProductID})'>Delete</button>`;
+    //            row += `</td></tr>`;
+    //            $("#tableData").append(row);
+    //        }
+    //    }
+    //}
+</script>

@@ -1,0 +1,40 @@
+﻿@{
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        tr.active {
+            background: yellow;
+        }
+    </style>
+</head>
+<body>
+    <table id="mytable" style="width:100%">
+        <tr>
+            <td>Jill</td>
+            <td>Smith</td>
+            <td>50</td>
+        </tr>
+        <tr>
+            <td>Eve</td>
+            <td>Jackson</td>
+            <td>94</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Doe</td>
+            <td>80</td>
+        </tr>
+    </table>
+    <script>
+        $(function () {
+            $("#mytable").DataTable();
+        });
+    </script>
+</body>
+</html>

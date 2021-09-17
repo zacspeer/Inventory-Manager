@@ -1,0 +1,8 @@
+﻿input:focus:default {
+    width: 120vh;
+    height: 40px;
+    max-width: 600vh;
+    border-style: hidden;
+    border-radius: 18px;
+    border-color: grey;
+}

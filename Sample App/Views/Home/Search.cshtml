@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = "Search";
+}
+
+<head>
+   <link rel="stylesheet" href="~/Scripts/dist/Search.css" />
+    <title>Search</title>
+</head>
+<body>
+    <div class="card shadow m-5 ">
+        <div class="card-header">
+            <div class="p-5">
+                <input type="text" id="sea" placeholder="Search for something.." style="width: 110vh; height: 40px; max-width: 600vh; border-style: solid;  border-color: grey;" required />
+                <button class="btn btn-lg" style="border-radius:15px; border: inset; border-color:gray;" onclick="search()" ><div style="font-weight:bolder;">Search</div></button>
+            </div>
+        </div>
+        <div class="card-body p-5" style="overflow: auto; max-height: 50vh;">
+            <table id="tabl" class="table table-striped table-hover table-borderless table-light" style="padding-left:22em">
+                <thead style="font-weight:bolder; background-color: transparent ">
+                    <tr><th>Product ID</th><th>Product Name</th><th>Category</th><th>Unit Price</th><th>Units in Stock</th></tr>
+                </thead>
+                <tbody id="tableData" class="table-light"></tbody>
+            </table>
+        </div>
+    </div>
+    @*Modal for null response for search *@
+    <div class="modal fade" id="nullresmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="exampleModalLabel">No Results Found</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        No results were found for the term you were looking for, try again with a different term.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Modal for empty search key *@ 
+    <div class="modal fade" id="emptysearch" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" >Please enter a search term.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        You have not entered a search term, please enter a search term and then try again.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function search() {
+            var value = $('#sea').val();
+            if (value != "") {
+                $.get(`${baseUrl}/search/${value}`).done((response) => {
+                    if (response == "") {
+                        del();
+                    }
+                    else {
+                        $("#tableData").empty();
+                        $.each(response, (index, value) => {
+                            var row = "<tr><td>" + value.ProductID + "</td><td>" + value.ProductName + "</td>" + "<td>" + value.Category + "</td>" + "<td>" + value.UnitPrice + "</td>" + "<td>" + value.UnitsInStock + "</td>" + "<td>";
+                            row += `</td></tr>`;
+                            $("#tableData").append(row);
+                        });
+                    }
+                });
+            }
+            else if (value == "") {
+                $("#emptysearch").modal('toggle');
+            }
+            else {
+                del();
+            }
+        }
+        function del() {
+            $("#nullresmodal").modal('toggle');
+        }
+    </script>
+</body>

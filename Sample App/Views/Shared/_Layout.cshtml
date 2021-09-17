@@ -1,0 +1,96 @@
+﻿<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="~/Scripts/dist/themes/default/style.css" />
+    <link rel="stylesheet" href="~/Scripts/dist/Scrollbar.css" />
+    <style>
+        .jstree-default .jstree-clicked {
+            color: black;
+            font-weight: bold;
+        }
+        .jstree-default .jstree-hovered{
+            color:black;
+        }
+    </style>
+</head>
+
+<body class="p-0 nav">
+
+    <nav class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 17vw; height:100vh">
+        <div>
+            <a href="/Home/Index" class="text-white text-decoration-none" style="text-align:center;">
+                <div class="fs-4" style="font-style:italic;">Consilio</div>
+            </a>
+        </div>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <div id="jstreedemo" style="overflow: auto; height: auto; width: auto; max-height: 350px; max-width: 15vw; color: snow; ">
+                    <ul id="ulid">
+                    </ul>
+                </div>
+            </li>
+            <br />
+            <li class="nav-item">
+                <a href="~/Home/Index" class="nav-link text-white btn " style="text-align:center; background-color: dimgrey; font-weight:bold; width:15vw;">
+                    Home
+                </a>
+            </li>
+            <br />
+            <li class="nav-item">
+                <a href="~/Home/Search" class="nav-link text-white btn" style="text-align:center; background-color:dimgray; font-weight:bold; width:15vw">
+                    Search
+                </a>
+            </li>
+        </ul>
+        <hr>
+    </nav>
+    <script src="~/Scripts/jquery-3.6.0.js"></script>
+    <script src="~/Scripts/dist/jstree.min.js"></script>
+    <script>
+        var baseUrl = "/api/td";
+        $(function () { loadjstree(); });
+        function loadjstree()
+        {
+            $("#jstreedemo").empty();
+            $.ajax(
+                {
+                    url: "/home/jsTreeData",
+                    type: "get",
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        if (data == "500") { alert("Error occurred while loading Jstree"); }
+                        else {
+                            $("#jstreedemo").jstree(
+                                {
+                                    "core": {
+                                        "data": data
+                                    },
+                                    "plugins": ["themes", "html_data", "checkbox", "sort", "ui", "wholerow", "changed",]
+
+                                }).on("changed.jstree", function (e, data) {
+                                    var selectedElms = $('#jstreedemo').jstree("get_selected", true);
+                                    passeddata(selectedElms);
+                                });
+                        }
+                    }
+                }
+            );
+        }
+        @*var baseUrl = "/api/td";
+        var treedata = @Html.Action("jsTreeData", "Home");
+        console.log(treedata);
+        $("#jstreedemo").jstree({
+            "core": {
+                "data": treedata
+            }
+        });*@
+    </script>
+</body>
+
+@RenderBody()
+@Scripts.Render("~/bundles/bootstrap")
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@*@Scripts.Render("~/bundles/jquery")*@
+@RenderSection("scripts", required: false)
