@@ -228,11 +228,7 @@
         
         if ($.fn.dataTable.isDataTable('#tabl')) {
             var table = $('#tabl').DataTable();
-
-            //clear datatable
             table.clear().draw();
-
-            //destroy datatable
             table.destroy();
             $.ajax(
                 {

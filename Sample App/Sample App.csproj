@@ -147,6 +147,7 @@
     <Compile Include="Models\JsTreeChild.cs" />
     <Compile Include="Models\jstreeclass.cs" />
     <Compile Include="Models\JsTreeData.cs" />
+    <Compile Include="Models\PIDandName.cs" />
     <Compile Include="Models\ProductDB.cs" />
     <Compile Include="Models\ProductProp.cs" />
     <Compile Include="Models\Update.cs" />

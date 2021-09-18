@@ -37,7 +37,6 @@ namespace Sample_App.Controllers
                 AddLog("Index[Post]", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
-            
         }
         public ActionResult jsTreeData()
         {
@@ -131,6 +130,21 @@ namespace Sample_App.Controllers
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
             
+        }
+        public ActionResult About()
+        {
+            return View("About");
+        }
+        [HttpPost]
+        public ActionResult datatable(FormCollection collection)
+        {
+            var ads = collection;
+            var list = Request["start"];
+            var sl = Request["length"];
+            var asd = Request["order[0][dir]"];
+            List<PIDandName> data1 = new List<PIDandName>() { new PIDandName() { ProductID="01", ProductName="Chai"}, new PIDandName() { ProductID="02", ProductName="Chang" },
+            new PIDandName(){ ProductID="03", ProductName="Ching" }, new PIDandName(){ ProductID="04", ProductName="Chong" } };
+            return Json(new { data = data1 }, JsonRequestBehavior.AllowGet);
         }
     }
 }
