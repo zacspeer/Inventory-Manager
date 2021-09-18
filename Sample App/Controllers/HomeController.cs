@@ -139,12 +139,16 @@ namespace Sample_App.Controllers
         public ActionResult datatable(FormCollection collection)
         {
             var ads = collection;
-            var list = Request["start"];
+             var list = Request["start"];
             var sl = Request["length"];
             var asd = Request["order[0][dir]"];
+            List<PIDandName> data2 = new List<PIDandName>() { new PIDandName() { ProductID = "01", ProductName = "Chai" } };
             List<PIDandName> data1 = new List<PIDandName>() { new PIDandName() { ProductID="01", ProductName="Chai"}, new PIDandName() { ProductID="02", ProductName="Chang" },
             new PIDandName(){ ProductID="03", ProductName="Ching" }, new PIDandName(){ ProductID="04", ProductName="Chong" } };
-            return Json(new { data = data1 }, JsonRequestBehavior.AllowGet);
+            if (asd == "asc")
+                return Json(new { data = data2 },JsonRequestBehavior.AllowGet);
+           else
+                return Json(new { data = data1 }, JsonRequestBehavior.AllowGet);
         }
     }
 }
