@@ -21,6 +21,10 @@
             <tr>
                 <th>Product ID</th>
                 <th>Product Name</th>
+                <th>Category</th>
+                <th>Unit Price</th>
+                <th>Units in Stock</th>
+                <th>Actions</th>
 
             </tr>
         </thead>
@@ -34,13 +38,20 @@
     $(function () {
         $("#tabl").DataTable({
             "ajax": {
-                "url": "/home/datatable",
+                "url": "/Home/datatable",
                 "dataType": "json",
                 "type": "post",
             },
             "columns": [
-                { "data": "ProductID"},
-                { "data": "ProductName"}
+                { "data": "ProductID", },
+                { "data": "ProductName" },
+                { "data": "Category" },
+                { "data": "UnitPrice" },
+                { "data": "UnitsInStock" },
+                {
+                    "data": "ProductID",
+                    "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                },
             ],
             "serverSide": "true",
             "order": [0,"asc"]

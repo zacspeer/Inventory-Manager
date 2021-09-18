@@ -9,14 +9,16 @@ namespace Sample_App.Models
     public class GetItems
     {
 
-        public List<ProductProp> getitems(SqlConnection connection, int no)
+        public List<ProductProp> getitems(SqlConnection connection, int start, int end/*,string sort*/)
         {
             List<ProductProp> listofitems = new List<ProductProp>();
             
             connection.Open();
             SqlCommand command = new SqlCommand(connection: connection, cmdText: "GetItems");
             command.CommandType = System.Data.CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@no",no);
+            //command.Parameters.AddWithValue("@colname",sort);
+            command.Parameters.AddWithValue("@start", start);
+            command.Parameters.AddWithValue("@end",end);
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())

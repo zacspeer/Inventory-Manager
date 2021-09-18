@@ -11,6 +11,7 @@ namespace Sample_App.Repos
 {
     public class Logger:Controller
     {
+        
         protected ProductDB db = new ProductDB();
         protected JsTreeData data = new JsTreeData();
         protected List<ProductProp> _nodeinfolist = new List<ProductProp>();
@@ -24,6 +25,10 @@ namespace Sample_App.Repos
             _command.Parameters.AddWithValue("@trace", trace);
             _command.Parameters.AddWithValue("@message", message);
             _command.ExecuteNonQuery();
+        }
+        public JsonResult converttojson(object a) 
+        {
+            return Json(a, JsonRequestBehavior.AllowGet);        
         }
     }
 }

@@ -232,60 +232,80 @@
             var table = $('#tabl').DataTable();
             table.clear().draw();
             table.destroy();
-            $.ajax(
-                {
-                    url: "/api/td/" + noe,
-                    type: "get",
-                    dataType: "json",
-                    success: function (data) {
-                        $("#tabl").DataTable(
-                            {
-                                "autoWidth": false,
-                                "data": data,
-                                "columns": [
-                                    { "data": "ProductID", },
-                                    { "data": "ProductName" },
-                                    { "data": "Category" },
-                                    { "data": "UnitPrice" },
-                                    { "data": "UnitsInStock" },
-                                    {
-                                        "data": "ProductID",
-                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
-                                    },
-                                ]
-                            });
-                        $('select[name="tabl_length"]').val(noe);
-                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
-                    }
-                });
+            $("#tabl").DataTable({
+                "ajax": {
+                    "url": "/Home/tabledata",
+                    "dataType": "json",
+                    "type": "post",
+                },
+                "columns": [
+                    { "data": "ProductID", "name": "ProductID" },
+                    { "data": "ProductName", "name": "ProductName" },
+                    { "data": "Category", "name": "Category" },
+                    { "data": "UnitPrice", "name": "UnitPrice" },
+                    { "data": "UnitsInStock", "name": "UnitsInStock" },
+                    {
+                        "orderable": false,
+                        "data": "ProductID",
+                        "render": function (data) {
+                            return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>`
+                        }
+                        
+                    },
+                ],
+                "serverSide": "true",
+                "order": [0, "asc"]
+            });
+            //$.ajax(
+            //    {
+            //        url: "/api/td/" + noe,
+            //        type: "get",
+            //        dataType: "json",
+            //        success: function (data) {
+            //            $("#tabl").DataTable(
+            //                {
+            //                    "autoWidth": false,
+            //                    "data": data,
+            //                    "columns": [
+            //                        { "data": "ProductID", },
+            //                        { "data": "ProductName" },
+            //                        { "data": "Category" },
+            //                        { "data": "UnitPrice" },
+            //                        { "data": "UnitsInStock" },
+            //                        {
+            //                            "data": "ProductID",
+            //                            "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+            //                        },
+            //                    ]
+            //                });
+            //            $('select[name="tabl_length"]').val(noe);
+            //            $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
+            //        }
+            //    });
         }
         else 
         {
-            $.ajax(
-                {
-                    url: "/api/td/" + noe,
-                    type: "get",
-                    dataType: "json",
-                    success: function (data) {
-                        $("#tabl").DataTable(
-                            {
-                                "autoWidth":false,
-                                "data": data,
-                                "columns": [
-                                    { "data": "ProductID", },
-                                    { "data": "ProductName" },
-                                    { "data": "Category" },
-                                    { "data": "UnitPrice" },
-                                    { "data": "UnitsInStock" },
-                                    {
-                                        "data": "ProductID",
-                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
-                                    },
-                                ]
-                            });
-                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
-                    }
-                });
+            $("#tabl").DataTable({
+                "ajax": {
+                    "url": "/Home/tabledata",
+                    "dataType": "json",
+                    "type": "post",
+                },
+                "columns": [
+                    { "data": "ProductID", "name": "ProductID" },
+                    { "data": "ProductName", "name": "ProductName" },
+                    { "data": "Category", "name": "Category" },
+                    { "data": "UnitPrice", "name": "UnitPrice" },
+                    { "data": "UnitsInStock", "name": "UnitsInStock" },
+                    {
+                        "orderable": false,
+                        "data": "ProductID",
+                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                    },
+                ],
+                "serverSide": "true",
+                "order": [0, "asc"]
+            });
         }
         
     }
@@ -325,12 +345,10 @@
     //    });
     //}
     function passeddata(sel) {
-        $("#pages").css({ "visibility": "hidden" });
         document.getElementById("deleteselected").style.visibility = "visible";
         if (sel == "") {
             adddata();
             /*loadpagination();*/
-            $("#pages").css({ "visibility": "" });
             document.getElementById("deleteselected").style.visibility = "hidden";
         }
         else {
@@ -354,7 +372,7 @@
                         $("#tabl").DataTable({
                             "data": data,
                             "columns": [
-                                {"data": "ProductID",},
+                                {"data": "ProductID"},
                                 { "data": "ProductName" },
                                 { "data": "Category" },
                                 { "data": "UnitPrice" },

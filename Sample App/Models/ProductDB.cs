@@ -41,10 +41,10 @@ namespace Sample_App.Models
             GetElement ele = new GetElement();
             return ele.element(ID);
         }
-        public List<ProductProp> getitems(int no)
+        public List<ProductProp> getitems(int start,int end/*,string sort*/)
         {
             GetItems items = new GetItems();
-            return items.getitems(connection,no);
+            return items.getitems(connection,start,end/*,sort*/);
         }
         public List<int> GetCategories()
         {
@@ -59,6 +59,20 @@ namespace Sample_App.Models
         public bool UpdateItem(ProductProp item)
         {
             return new Update().add(item);
+        }
+        int count;
+        public int datacount()
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("DataCount", connection);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                count = reader.GetInt32(0);
+            }
+            connection.Close();
+            return count;
         }
     }
 }

@@ -136,19 +136,27 @@ namespace Sample_App.Controllers
             return View("About");
         }
         [HttpPost]
-        public ActionResult datatable(FormCollection collection)
+        public ActionResult tabledata(FormCollection collection)
         {
-            var ads = collection;
-             var list = Request["start"];
-            var sl = Request["length"];
-            var asd = Request["order[0][dir]"];
-            List<PIDandName> data2 = new List<PIDandName>() { new PIDandName() { ProductID = "01", ProductName = "Chai" } };
-            List<PIDandName> data1 = new List<PIDandName>() { new PIDandName() { ProductID="01", ProductName="Chai"}, new PIDandName() { ProductID="02", ProductName="Chang" },
-            new PIDandName(){ ProductID="03", ProductName="Ching" }, new PIDandName(){ ProductID="04", ProductName="Chong" } };
-            if (asd == "asc")
-                return Json(new { data = data2 },JsonRequestBehavior.AllowGet);
-           else
-                return Json(new { data = data1 }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                int drawvalue = Convert.ToInt32(Request["draw"]);
+                int start = Convert.ToInt32(Request["start"]) + 1;
+                int end = Convert.ToInt32(Request["start"]) + Convert.ToInt32(Request["length"]);
+                //if (start == 0) { start++; end = (start + Convert.ToInt32(Request["length"])) - 1; }
+                //else
+                //    end = start + Convert.ToInt32(Request["length"]);
+                var sl = Request["length"];
+                string a = Request["order[0][column]"];
+                string sort = Request["columns[" + a + "][name]"];
+                return Json(new { data = db.getitems(start, end), draw = drawvalue, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                AddLog("tabledata", ex.Message, ex.StackTrace);
+                return Json(new { error = "Internal Server error" }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
