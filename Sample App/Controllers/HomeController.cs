@@ -143,13 +143,12 @@ namespace Sample_App.Controllers
                 int drawvalue = Convert.ToInt32(Request["draw"]);
                 int start = Convert.ToInt32(Request["start"]) + 1;
                 int end = Convert.ToInt32(Request["start"]) + Convert.ToInt32(Request["length"]);
-                //if (start == 0) { start++; end = (start + Convert.ToInt32(Request["length"])) - 1; }
-                //else
-                //    end = start + Convert.ToInt32(Request["length"]);
                 var sl = Request["length"];
                 string a = Request["order[0][column]"];
-                string sort = Request["columns[" + a + "][name]"];
-                return Json(new { data = db.getitems(start, end), draw = drawvalue, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
+                string direction = Request["order[0][dir]"];
+                string column = Request["columns[" + a + "][name]"];
+                if (column == "Category") { column = "CategoryID"; }
+                return Json(new { data = db.get(start, end,column,direction), draw = drawvalue, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception ex)

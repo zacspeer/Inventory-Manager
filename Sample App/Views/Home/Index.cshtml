@@ -5,37 +5,41 @@
 <head>
     <title>Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="~/Scripts/DataTables/datatables.min.css" />
+    
+    
     <style>
-        .page-item.active .page-link{
+        .page-item.active .page-link {
             font-weight: bold;
-            color:black;
+            color: black;
         }
-        .page-link{
-            color:black;
+
+        .page-link {
+            color: black;
         }
-        .paginate_button .page-item{
-            text-decoration:black;
+
+        .paginate_button .page-item {
+            text-decoration: black;
         }
-        table th {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #fff;
+
+        tr {
+            width: 99vw;
+        }
+        th {
+            text-align: inherit;
+            text-align: -webkit-match-parent;
         }
     </style>
 </head>
 <body>
-    <div class="card m-auto shadow bg-light p-3" style="overflow:auto; max-height:95vh;">
+    <div class="card m-auto shadow bg-light p-3" style="overflow:scroll; max-height:95vh;">
         <div class="card-header bg-light">
-            <div style="text-align:center; font-weight: bolder; font-size: 22px;"><button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button>
-            List of Products
-            <button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button></div>
+            <div style="text-align:center; font-weight: bolder; font-size: 22px;">
+                <button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button>List of Products<button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button>
+            </div>
         </div>
-        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:70vw;">
-            <table id="tabl" class="table table-striped table-light table-borderless" style="overflow:scroll;">
-                <thead style="position: sticky; position: -webkit-sticky;">
+        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:75vw;">
+            <table id="datatab" class="table table-striped table-light table-borderless">
+                <thead>
                     <tr>
                         <th>Product ID</th>
                         <th>Product Name</th>
@@ -45,10 +49,24 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableData" style="overflow:scroll;"></tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
+    @*<table id="tabla" class="table table-striped table-light table-borderless" style="overflow:scroll;">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Unit Price</th>
+                <th>Units in Stock</th>
+                <th>Actions</th>
+
+            </tr>
+        </thead>
+        <tbody  style="overflow:scroll;"></tbody>
+    </table>*@
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -180,19 +198,38 @@
             </div>
         </div>
     </div>
-    <script src="~/Scripts/DataTables/datatables.min.js"></script>
 
 </body>
-
+<link rel="stylesheet" href="~/Scripts/DataTables/datatables.css" />
 @*<script src="~/Scripts/DataScripts.js"></script>*@
+<script src="~/Scripts/DataTables/datatables.min.js"></script>
 <script>
     var baseUrl = "/api/td";
     var tdata;
     var pageno;
     var maxpages;
     $(function () {
-        console.log($(`Select[name="tabl_length"]`).val());
-        adddata($(`Select[name="tabl_length"]`).val());
+        //$("#tabla").DataTable({
+        //    "ajax": {
+        //        "url": "/Home/tabledata",
+        //        "dataType": "json",
+        //        "type": "post",
+        //    },
+        //    "columns": [
+        //        { "data": "ProductID", },
+        //        { "data": "ProductName" },
+        //        { "data": "Category" },
+        //        { "data": "UnitPrice" },
+        //        { "data": "UnitsInStock" },
+        //        {
+        //            "data": "ProductID",
+        //            "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+        //        },
+        //    ],
+        //    "serverSide": "true",
+        //    "order": [0, "asc"]
+        //});
+        adddata();
         //$.ajax(
         //    {
         //        url:"/api/td",
@@ -209,10 +246,11 @@
         //adddata();
         //loadpagination();
     });
-    
-    
-    function adddata(noe) {
-       /* $("#nop,#noplabel").css({ "visibility": "hidden" });*/
+
+
+    function adddata() {
+
+        /* $("#nop,#noplabel").css({ "visibility": "hidden" });*/
         //$.get(`${baseUrl}`).done((response) => {
         //    $("#tableData").empty();
         //    $.each(response, (index, value) => {
@@ -225,14 +263,43 @@
         //    $('select[name="tabl_length"]').on("click", function () { console.log("dats: " + $('select[name="tabl_length"]').val()) });
         //    $(".paginate_button .page-item").css({ "color":"black" });
         //});
-        $("#deleteselected").css({"visibility":"hidden"});
-        if (noe == null) { noe = 10; }
-        
-        if ($.fn.dataTable.isDataTable('#tabl')) {
-            var table = $('#tabl').DataTable();
+        $("#deleteselected").css({ "visibility": "hidden" });
+
+        if ($.fn.dataTable.isDataTable('#datatab')) {
+            var table = $('#datatab').DataTable();
+
+            //clear datatable
             table.clear().draw();
+
+            //destroy datatable
             table.destroy();
-            $("#tabl").DataTable({
+            //$("#tabl").destroy();
+            //$("#datatab").DataTable({
+            //    "ajax": {
+            //        "url": "/Home/tabledata",
+            //        "dataType": "json",
+            //        "type": "post",
+            //    },
+            //    "columns": [
+            //        { "data": "ProductID", "name": "ProductID" },
+            //        { "data": "ProductName", "name": "ProductName" },
+            //        { "data": "Category", "name": "Category" },
+            //        { "data": "UnitPrice", "name": "UnitPrice" },
+            //        { "data": "UnitsInStock", "name": "UnitsInStock" },
+            //        {
+            //            "orderable": false,
+            //            "data": "ProductID",
+            //            "render": function (data) {
+            //                return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>`
+            //            }
+
+            //        },
+            //    ],
+            //    "serverSide": "true",
+            //    "order": [0, "asc"],
+            //    "responsive": true
+            //});
+            $("#datatab").DataTable({
                 "ajax": {
                     "url": "/Home/tabledata",
                     "dataType": "json",
@@ -247,18 +314,17 @@
                     {
                         "orderable": false,
                         "data": "ProductID",
-                        "render": function (data) {
-                            return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>`
-                        }
-                        
+                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
                     },
                 ],
                 "serverSide": "true",
-                "order": [0, "asc"]
+                "order": [0, "asc"],
+                "responsive": true
             });
+
             //$.ajax(
             //    {
-            //        url: "/api/td/" + noe,
+            //        url: "/api/td/" + 80,
             //        type: "get",
             //        dataType: "json",
             //        success: function (data) {
@@ -283,9 +349,8 @@
             //        }
             //    });
         }
-        else 
-        {
-            $("#tabl").DataTable({
+        else { 
+            $("#datatab").DataTable({
                 "ajax": {
                     "url": "/Home/tabledata",
                     "dataType": "json",
@@ -304,26 +369,30 @@
                     },
                 ],
                 "serverSide": "true",
-                "order": [0, "asc"]
+                "order": [0, "asc"],
+                "responsive": true
             });
         }
-        
+
     }
     function del(value) {
         if (confirm("Are you sure you want to Delete?. ")) {
             $.post(`${baseUrl}/delete/${value}`).done((response) => {
                 console.log("from del(): " + response);
                 adddata();
-                $("#jstreedemo").jstree('destroy');
+                $("#jstreedemo").jstree("destroy");
                 loadjstree();
                 if (response == "200") {
                     $("#deleted").toast('show');
-                } });
+
+                    /*$("#jstreedemo").jstree("reload");*/
+                }
+            });
             //TODO: add a toast for deleted and an alert : https://getbootstrap.com/docs/5.0/components/toasts/
             /*$("#jstree")*/
         }
     }
-    
+
     //function getdata(id) {
     //    $.post("/home/nodeinfo", { data: id }, function (value) {
     //        if (value != "") {
@@ -352,10 +421,10 @@
             document.getElementById("deleteselected").style.visibility = "hidden";
         }
         else {
-            var table = $('#tabl').DataTable();
+            var table = $('#datatab').DataTable();
 
             //clear datatable
-            table.clear().draw();
+            table.clear();
 
             //destroy datatable
             table.destroy();
@@ -366,13 +435,13 @@
                     type: "post",
                     dataType: "json",
                     data: { data: sel },
-                    success: function (data)
-                    {
+                    success: function (data) {
                         console.log(data);
-                        $("#tabl").DataTable({
+                        $("#datatab").DataTable({
                             "data": data,
+                            "responsive": true,
                             "columns": [
-                                {"data": "ProductID"},
+                                { "data": "ProductID" },
                                 { "data": "ProductName" },
                                 { "data": "Category" },
                                 { "data": "UnitPrice" },
@@ -394,43 +463,41 @@
         //    success: function (res) { console.log("Response: " + res); }
         //});
     }
-    function edit(id)
-    {
+    function edit(id) {
         $.ajax({
             url: "/api/td/Edit/" + id,
             type: "get",
             dataType: "json",
-            success: function (data)
-            {
+            success: function (data) {
                 $("#editModal").modal('toggle');
                 document.getElementById("pid").value = data.ProductID;
                 document.getElementById("pname").value = data.ProductName;
                 document.getElementById("uprice").value = data.UnitPrice;
                 document.getElementById("ustock").value = data.UnitsInStock;
                 document.getElementById("cat").value = data.Category;
-              
+
             }
         });
     }
     function savedata() {
-            $.ajax({
-                url: "/home/Edit",
-                type: "post",
-                dataType: "json",
-                data: $("#eform").serialize(),
-                success: function (data) {
-                    $("#editModal").modal('toggle');
-                    
-                    adddata();
-                    $("#jstreedemo").jstree('destroy');
-                    loadjstree();
-                    if (data == 202) {
-                        $("#edited").toast('show');
-                    }
-                    
+        $.ajax({
+            url: "/home/Edit",
+            type: "post",
+            dataType: "json",
+            data: $("#eform").serialize(),
+            success: function (data) {
+                $("#editModal").modal('toggle');
+
+                adddata();
+                $("#jstreedemo").jstree('destroy');
+                loadjstree();
+                if (data == 202) {
+                    $("#edited").toast('show');
                 }
-            });
-        
+
+            }
+        });
+
     }
     $("#deleteselected").on("click", function () {
         var a = $('#jstreedemo').jstree("get_selected", true);
@@ -442,7 +509,7 @@
             document.getElementById("deleteselected").style.visibility = "hidden";
             $("#deletedmodal").modal('toggle');
         }
-        
+
     });
     $("#newdataform").submit(function (eve) {
         eve.preventDefault();
@@ -455,16 +522,16 @@
                 $("#exampleModal").modal('toggle');
 
                 adddata();
-                $("#jstreedemo").jstree('destroy');
+                $("#jstreedemo").jstree("destroy");
                 loadjstree();
                 if (data == 202) {
                     $("#added").toast('show');
                 }
             }
         });
-        
+
     });
-        //function loadpagination()
+    //function loadpagination()
     //{
     //    $("#pages").css({ "visibility": "" });
     //    $("#nop,#noplabel").css({ "visibility": "" });
