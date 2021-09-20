@@ -21,23 +21,16 @@
             text-decoration: black;
         }
 
-        tr {
-            width: 99vw;
-        }
-        th {
-            text-align: inherit;
-            text-align: -webkit-match-parent;
-        }
     </style>
 </head>
 <body>
-    <div class="card m-auto shadow bg-light p-3" style="overflow:scroll; max-height:95vh;">
-        <div class="card-header bg-light">
+    <div class="card m-auto shadow bg-light p-3" style="overflow:auto; max-height:95vh;">
+        <div class="card-header bg-light" style="overflow:auto;">
             <div style="text-align:center; font-weight: bolder; font-size: 22px;">
                 <button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button>List of Products<button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button>
             </div>
         </div>
-        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:75vw;">
+        <div class="card-body m-auto" style="overflow:auto; height: 75vh; width:75vw;">
             <table id="datatab" class="table table-striped table-light table-borderless">
                 <thead>
                     <tr>
@@ -308,7 +301,7 @@
                 "columns": [
                     { "data": "ProductID", "name": "ProductID" },
                     { "data": "ProductName", "name": "ProductName" },
-                    { "data": "Category", "name": "Category" },
+                    { "data": "Category", "name": "CategoryID" },
                     { "data": "UnitPrice", "name": "UnitPrice" },
                     { "data": "UnitsInStock", "name": "UnitsInStock" },
                     {
@@ -319,7 +312,8 @@
                 ],
                 "serverSide": "true",
                 "order": [0, "asc"],
-                "responsive": true
+                "responsive": true,
+                "autoWidth": false
             });
 
             //$.ajax(
@@ -359,7 +353,7 @@
                 "columns": [
                     { "data": "ProductID", "name": "ProductID" },
                     { "data": "ProductName", "name": "ProductName" },
-                    { "data": "Category", "name": "Category" },
+                    { "data": "Category", "name": "CategoryID" },
                     { "data": "UnitPrice", "name": "UnitPrice" },
                     { "data": "UnitsInStock", "name": "UnitsInStock" },
                     {
@@ -370,7 +364,9 @@
                 ],
                 "serverSide": "true",
                 "order": [0, "asc"],
-                "responsive": true
+                "responsive": true,
+                "autoWidth": false,
+                "scrollY": "320px"
             });
         }
 
@@ -438,6 +434,7 @@
                     success: function (data) {
                         console.log(data);
                         $("#datatab").DataTable({
+                            "autoWidth": false,
                             "data": data,
                             "responsive": true,
                             "columns": [

@@ -147,7 +147,6 @@ namespace Sample_App.Controllers
                 string a = Request["order[0][column]"];
                 string direction = Request["order[0][dir]"];
                 string column = Request["columns[" + a + "][name]"];
-                if (column == "Category") { column = "CategoryID"; }
                 return Json(new { data = db.get(start, end,column,direction), draw = drawvalue, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
 
             }
