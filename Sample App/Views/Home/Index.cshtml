@@ -313,7 +313,8 @@
                 "serverSide": "true",
                 "order": [0, "asc"],
                 "responsive": true,
-                "autoWidth": false
+                "autoWidth": false,
+                "scrollY": "320px"
             });
 
             //$.ajax(
@@ -435,6 +436,7 @@
                         console.log(data);
                         $("#datatab").DataTable({
                             "autoWidth": false,
+                            "scrollY": "320px",
                             "data": data,
                             "responsive": true,
                             "columns": [
