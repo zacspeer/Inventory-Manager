@@ -1,1 +1,1 @@
-# Read the EXEC_THIS_IN_SSMS before running the app
+# Read the "EXEC_THIS_IN_SSMS.txt" before running the app
