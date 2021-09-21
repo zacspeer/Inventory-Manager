@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Sample_App.Models;
+using Sample_App.Repos;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -14,7 +15,7 @@ namespace Sample_App.Controllers
     [RoutePrefix("api/td")]
     public class TableDataController : ApiController
     {
-        
+        Logger log = new Logger();
         IRepo<ProductProp, int> repo;
         public TableDataController()
         {
@@ -22,9 +23,16 @@ namespace Sample_App.Controllers
         }
         [Route("{id}")]
         public IEnumerable<ProductProp> Get(int id)
-        { 
-            var a = repo.getitems(id);
+        {
+            var a = repo.getitems(1,22);
             return a;
+        }
+        [HttpPost]
+        [Route("")]
+        public System.Web.Mvc.ActionResult Get(System.Web.Mvc.FormCollection collection)
+        {
+            var a = repo.getitems(9,22);
+            return log.converttojson(a);
         }
  
        [HttpPost]
@@ -32,7 +40,7 @@ namespace Sample_App.Controllers
        public IHttpActionResult Delete(int id)
        {
             if (repo.deleteitem(id))
-                return Ok("Deleted");
+                return Ok("200");
             else
                 return StatusCode(System.Net.HttpStatusCode.InternalServerError); //Ok("InternalServerError: Could not Delete.");
        }

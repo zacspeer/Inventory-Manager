@@ -10,7 +10,6 @@ namespace Sample_App.Controllers
 {
     public class HomeController : Logger
     {
-       
         public ActionResult Index()
         {
             try
@@ -29,7 +28,7 @@ namespace Sample_App.Controllers
             try
             {
                 if (db.additem(item)) //Add item to the db 
-                    return RedirectToAction("Index", "Home");
+                    return Json(HttpStatusCode.Accepted);
                 else
                     return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
@@ -38,7 +37,6 @@ namespace Sample_App.Controllers
                 AddLog("Index[Post]", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
-            
         }
         public ActionResult jsTreeData()
         {
@@ -79,7 +77,6 @@ namespace Sample_App.Controllers
                 AddLog("nodeInfo", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
-           
         }
         [HttpPost]
         public ActionResult nodedelete(string data)
@@ -107,11 +104,11 @@ namespace Sample_App.Controllers
 
         [HttpPost]
         public ActionResult Edit(ProductProp data)
-        {
+        { 
             try
             {
                 if (db.UpdateItem(data)) 
-                    return RedirectToAction("Index", "Home");
+                    return Json(HttpStatusCode.Accepted);
                 else
                     return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
@@ -129,11 +126,33 @@ namespace Sample_App.Controllers
             }
             catch (Exception ex)
             {
-
                 AddLog("Search", ex.Message, ex.StackTrace);
                 return RedirectToAction(controllerName: "Error", actionName: "ServerError");
             }
             
+        }
+        public ActionResult About()
+        {
+            return View("About");
+        }
+        [HttpPost]
+        public ActionResult tabledata(FormCollection collection)
+        {
+            try
+            {
+                tableProperties.Draw = Convert.ToInt32(Request["draw"]);
+                tableProperties.Start = Convert.ToInt32(Request["start"]) + 1;
+                tableProperties.End = Convert.ToInt32(Request["start"]) + Convert.ToInt32(Request["length"]);
+                tableProperties.Direction = Request["order[0][dir]"];
+                tableProperties.Column = Request["columns[" + Request["order[0][column]"] + "][name]"];
+                return Json(new { data = db.get(tableProperties), draw = tableProperties.Draw, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                AddLog("tabledata", ex.Message, ex.StackTrace);
+                return Json(new { error = "Internal Server error" }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Sample_App.Models
 {
     public interface IRepo<TEntity, TData>
     {
-        List<TEntity> getitems(TData no);
+        List<TEntity> getitems(TData no,TData n/*,TData a*/);
         ProductProp getelement(TData ID);
         bool additem(TEntity item);
         bool deleteitem(TData item);

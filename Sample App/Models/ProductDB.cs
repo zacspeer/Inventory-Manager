@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
 using System.Text;
+using Sample_App.Repos;
 
 namespace Sample_App.Models
 {
@@ -18,6 +19,7 @@ namespace Sample_App.Models
         {
             connectionstring = ConfigurationManager.ConnectionStrings["NothwindContext"].ConnectionString;
             connection = new SqlConnection(connectionString: connectionstring);
+            
         }
         #endregion Constructor
 
@@ -40,10 +42,10 @@ namespace Sample_App.Models
             GetElement ele = new GetElement();
             return ele.element(ID);
         }
-        public List<ProductProp> getitems(int no)
+        public List<ProductProp> getitems(int start,int end/*,string sort*/)
         {
             GetItems items = new GetItems();
-            return items.getitems(connection,no);
+            return items.getitems(connection,start,end/*,sort*/);
         }
         public List<int> GetCategories()
         {
@@ -58,6 +60,44 @@ namespace Sample_App.Models
         public bool UpdateItem(ProductProp item)
         {
             return new Update().add(item);
+        }
+        int count;
+        public int datacount()
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("DataCount", connection);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                count = reader.GetInt32(0);
+            }
+            connection.Close();
+            return count;
+        }
+        public List<ProductProp> get(TableProperties tableProperties)
+        {
+            List<ProductProp> listofitems = new List<ProductProp>();
+            connection.Open();
+            SqlCommand command = new SqlCommand(connection: connection, cmdText: "with Temp as (Select ROW_NUMBER() over (order by "+tableProperties.Column+" "+tableProperties.Direction+") as 'RowNumber', ProductID,ProductName,CategoryID,UnitPrice,UnitsInstock from Product)Select ProductID, ProductName, CategoryID, UnitPrice, UnitsInstock From Temp where RowNumber between @start and @end");
+            command.CommandType = System.Data.CommandType.Text;
+            //command.Parameters.AddWithValue("@colname",sort);
+            command.Parameters.AddWithValue("@start", tableProperties.Start);
+            command.Parameters.AddWithValue("@end", tableProperties.End);
+            command.ExecuteNonQuery();
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ProductProp product = new ProductProp();
+                product.ProductID = Convert.ToInt32(reader["ProductID"]);
+                product.ProductName = reader["ProductName"].ToString();
+                product.Category = Convert.ToInt32(reader["CategoryID"]);
+                product.UnitPrice = Convert.ToDouble(reader["UnitPrice"]);
+                product.UnitsInStock = Convert.ToInt16(reader["UnitsInStock"]);
+                listofitems.Add(product);
+            }
+            connection.Close();
+            return listofitems;
         }
     }
 }

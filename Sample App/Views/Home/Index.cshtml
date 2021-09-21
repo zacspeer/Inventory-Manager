@@ -1,30 +1,37 @@
-﻿@{
+﻿@model Sample_App.Models.ProductProp
+@{
     ViewBag.Title = "Home Page";
 }
 <head>
     <title>Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="~/Scripts/DataTables/datatables.min.css" />
+    
+    
     <style>
-        .page-item.active .page-link{
+        .page-item.active .page-link {
             font-weight: bold;
-            color:black;
+            color: black;
         }
-        .page-link{
-            color:black;
+
+        .page-link {
+            color: black;
         }
-        .paginate_button .page-item{
-            text-decoration:black;
+
+        .paginate_button .page-item {
+            text-decoration: black;
         }
+
     </style>
 </head>
 <body>
     <div class="card m-auto shadow bg-light p-3" style="overflow:auto; max-height:95vh;">
-        <div class="card-header bg-light">
-            <div style="text-align:center; font-weight: bolder; font-size: 22px;"><button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button> List of Products <button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button></div>
+        <div class="card-header bg-light" style="overflow:auto;">
+            <div style="text-align:center; font-weight: bolder; font-size: 22px;">
+                <button id="deleteselected" class="btn btn-secondary" style="float:left; visibility:hidden;">Delete All Selected</button>List of Products<button type="button" class="btn btn-danger" style="float:right; width:auto;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Product</button>
+            </div>
         </div>
-        <div class="card-body m-auto" style="overflow:scroll; height: 75vh; width:70vw;">
-            <table id="tabl" class="table table-striped table-light table-borderless">
+        <div class="card-body m-auto" style="overflow:auto; height: 75vh; width:75vw;">
+            <table id="datatab" class="table table-striped table-light table-borderless">
                 <thead>
                     <tr>
                         <th>Product ID</th>
@@ -35,10 +42,24 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableData"></tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
+    @*<table id="tabla" class="table table-striped table-light table-borderless" style="overflow:scroll;">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Unit Price</th>
+                <th>Units in Stock</th>
+                <th>Actions</th>
+
+            </tr>
+        </thead>
+        <tbody  style="overflow:scroll;"></tbody>
+    </table>*@
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -46,9 +67,8 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post">
+                <form method="post" id="newdataform">
                     <div class="modal-body">
-
                         <input type="hidden" name="ProductID" value="0" id="ProductID" />
                         <div class="form-floating mb-auto">
                             <input type="text" name="ProductName" class="form-control" required />
@@ -85,7 +105,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="/Home/Edit" method="post" id="eform">
+                <form id="eform">
                     <div class="modal-body">
 
                         <input type="hidden" name="ProductID" id="pid" />
@@ -111,7 +131,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" id="esubmit" class="btn btn-primary">Save</button>
+                        <button type="button" id="esubmit" class="btn btn-primary" onclick="savedata()">Save</button>
                     </div>
                 </form>
             </div>
@@ -135,18 +155,74 @@
             </div>
         </div>
     </div>
-    <script src="~/Scripts/DataTables/datatables.min.js"></script>
-</body>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="edited" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#00ff1a" /></svg>
+                <strong class="me-auto">Success!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Data was edited and saved successfully.
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="added" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#00ff1a" /></svg>
+                <strong class="me-auto">Success!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Data was added successfully.
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="deleted" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#eddd00" /></svg>
+                <strong class="me-auto">Success!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Data was deleted successfully.
+            </div>
+        </div>
+    </div>
 
+</body>
+<link rel="stylesheet" href="~/Scripts/DataTables/datatables.css" />
 @*<script src="~/Scripts/DataScripts.js"></script>*@
+<script src="~/Scripts/DataTables/datatables.min.js"></script>
 <script>
     var baseUrl = "/api/td";
     var tdata;
     var pageno;
     var maxpages;
     $(function () {
-        console.log($(`Select[name="tabl_length"]`).val());
-        adddata($(`Select[name="tabl_length"]`).val());
+        //$("#tabla").DataTable({
+        //    "ajax": {
+        //        "url": "/Home/tabledata",
+        //        "dataType": "json",
+        //        "type": "post",
+        //    },
+        //    "columns": [
+        //        { "data": "ProductID", },
+        //        { "data": "ProductName" },
+        //        { "data": "Category" },
+        //        { "data": "UnitPrice" },
+        //        { "data": "UnitsInStock" },
+        //        {
+        //            "data": "ProductID",
+        //            "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+        //        },
+        //    ],
+        //    "serverSide": "true",
+        //    "order": [0, "asc"]
+        //});
+        adddata();
         //$.ajax(
         //    {
         //        url:"/api/td",
@@ -163,10 +239,11 @@
         //adddata();
         //loadpagination();
     });
-    
-    
-    function adddata(noe) {
-       /* $("#nop,#noplabel").css({ "visibility": "hidden" });*/
+
+
+    function adddata() {
+
+        /* $("#nop,#noplabel").css({ "visibility": "hidden" });*/
         //$.get(`${baseUrl}`).done((response) => {
         //    $("#tableData").empty();
         //    $.each(response, (index, value) => {
@@ -179,80 +256,140 @@
         //    $('select[name="tabl_length"]').on("click", function () { console.log("dats: " + $('select[name="tabl_length"]').val()) });
         //    $(".paginate_button .page-item").css({ "color":"black" });
         //});
-        if (noe == null) { noe = 10; }
-        
-        if ($.fn.dataTable.isDataTable('#tabl')) {
-            var table = $('#tabl').DataTable();
+        $("#deleteselected").css({ "visibility": "hidden" });
+
+        if ($.fn.dataTable.isDataTable('#datatab')) {
+            var table = $('#datatab').DataTable();
 
             //clear datatable
             table.clear().draw();
 
             //destroy datatable
             table.destroy();
-            $.ajax(
-                {
-                    url: "/api/td/" + noe,
-                    type: "get",
-                    dataType: "json",
-                    success: function (data) {
-                        $("#tabl").DataTable(
-                            {
-                                "autoWidth": false,
-                                "data": data,
-                                "columns": [
-                                    { "data": "ProductID", },
-                                    { "data": "ProductName" },
-                                    { "data": "Category" },
-                                    { "data": "UnitPrice" },
-                                    { "data": "UnitsInStock" },
-                                    {
-                                        "data": "ProductID",
-                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
-                                    },
-                                ]
-                            });
-                        $('select[name="tabl_length"]').val(noe);
-                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
-                    }
-                });
+            //$("#tabl").destroy();
+            //$("#datatab").DataTable({
+            //    "ajax": {
+            //        "url": "/Home/tabledata",
+            //        "dataType": "json",
+            //        "type": "post",
+            //    },
+            //    "columns": [
+            //        { "data": "ProductID", "name": "ProductID" },
+            //        { "data": "ProductName", "name": "ProductName" },
+            //        { "data": "Category", "name": "Category" },
+            //        { "data": "UnitPrice", "name": "UnitPrice" },
+            //        { "data": "UnitsInStock", "name": "UnitsInStock" },
+            //        {
+            //            "orderable": false,
+            //            "data": "ProductID",
+            //            "render": function (data) {
+            //                return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>`
+            //            }
+
+            //        },
+            //    ],
+            //    "serverSide": "true",
+            //    "order": [0, "asc"],
+            //    "responsive": true
+            //});
+            $("#datatab").DataTable({
+                "ajax": {
+                    "url": "/Home/tabledata",
+                    "dataType": "json",
+                    "type": "post",
+                },
+                "columns": [
+                    { "data": "ProductID", "name": "ProductID" },
+                    { "data": "ProductName", "name": "ProductName" },
+                    { "data": "Category", "name": "CategoryID" },
+                    { "data": "UnitPrice", "name": "UnitPrice" },
+                    { "data": "UnitsInStock", "name": "UnitsInStock" },
+                    {
+                        "orderable": false,
+                        "data": "ProductID",
+                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                    },
+                ],
+                "serverSide": "true",
+                "order": [0, "asc"],
+                "responsive": true,
+                "autoWidth": false,
+                "scrollY": "320px"
+            });
+
+            //$.ajax(
+            //    {
+            //        url: "/api/td/" + 80,
+            //        type: "get",
+            //        dataType: "json",
+            //        success: function (data) {
+            //            $("#tabl").DataTable(
+            //                {
+            //                    "autoWidth": false,
+            //                    "data": data,
+            //                    "columns": [
+            //                        { "data": "ProductID", },
+            //                        { "data": "ProductName" },
+            //                        { "data": "Category" },
+            //                        { "data": "UnitPrice" },
+            //                        { "data": "UnitsInStock" },
+            //                        {
+            //                            "data": "ProductID",
+            //                            "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+            //                        },
+            //                    ]
+            //                });
+            //            $('select[name="tabl_length"]').val(noe);
+            //            $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
+            //        }
+            //    });
         }
-        else 
-        {
-            $.ajax(
-                {
-                    url: "/api/td/" + noe,
-                    type: "get",
-                    dataType: "json",
-                    success: function (data) {
-                        $("#tabl").DataTable(
-                            {
-                                "autoWidth":false,
-                                "data": data,
-                                "columns": [
-                                    { "data": "ProductID", },
-                                    { "data": "ProductName" },
-                                    { "data": "Category" },
-                                    { "data": "UnitPrice" },
-                                    { "data": "UnitsInStock" },
-                                    {
-                                        "data": "ProductID",
-                                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
-                                    },
-                                ]
-                            });
-                        $('select[name="tabl_length"]').on('change', function () { adddata($('select[name="tabl_length"]').val()); });
-                    }
-                });
+        else { 
+            $("#datatab").DataTable({
+                "ajax": {
+                    "url": "/Home/tabledata",
+                    "dataType": "json",
+                    "type": "post",
+                },
+                "columns": [
+                    { "data": "ProductID", "name": "ProductID" },
+                    { "data": "ProductName", "name": "ProductName" },
+                    { "data": "Category", "name": "CategoryID" },
+                    { "data": "UnitPrice", "name": "UnitPrice" },
+                    { "data": "UnitsInStock", "name": "UnitsInStock" },
+                    {
+                        "orderable": false,
+                        "data": "ProductID",
+                        "render": function (data) { return `<button class="btn btn-sm btn-secondary" onclick="edit(${data})">Edit</button>&nbsp;<button class='btn btn-sm btn-secondary' onclick='del(${data})'>Delete</button>` }
+                    },
+                ],
+                "serverSide": "true",
+                "order": [0, "asc"],
+                "responsive": true,
+                "autoWidth": false,
+                "scrollY": "320px"
+            });
         }
-        
+
     }
     function del(value) {
         if (confirm("Are you sure you want to Delete?. ")) {
-            $.post(`${baseUrl}/delete/${value}`).done((response) => { $("#deletedmodal").modal('toggle'); });
+            $.post(`${baseUrl}/delete/${value}`).done((response) => {
+                console.log("from del(): " + response);
+                adddata();
+                $("#jstreedemo").jstree("destroy");
+                loadjstree();
+                if (response == "200") {
+                    $("#deleted").toast('show');
+
+                    /*$("#jstreedemo").jstree("reload");*/
+                }
+            });
             //TODO: add a toast for deleted and an alert : https://getbootstrap.com/docs/5.0/components/toasts/
             /*$("#jstree")*/
         }
     }
+
     //function getdata(id) {
     //    $.post("/home/nodeinfo", { data: id }, function (value) {
     //        if (value != "") {
@@ -274,19 +411,17 @@
     //    });
     //}
     function passeddata(sel) {
-        $("#pages").css({ "visibility": "hidden" });
         document.getElementById("deleteselected").style.visibility = "visible";
         if (sel == "") {
             adddata();
             /*loadpagination();*/
-            $("#pages").css({ "visibility": "" });
             document.getElementById("deleteselected").style.visibility = "hidden";
         }
         else {
-            var table = $('#tabl').DataTable();
+            var table = $('#datatab').DataTable();
 
             //clear datatable
-            table.clear().draw();
+            table.clear();
 
             //destroy datatable
             table.destroy();
@@ -297,13 +432,15 @@
                     type: "post",
                     dataType: "json",
                     data: { data: sel },
-                    success: function (data)
-                    {
+                    success: function (data) {
                         console.log(data);
-                        $("#tabl").DataTable({
+                        $("#datatab").DataTable({
+                            "autoWidth": false,
+                            "scrollY": "320px",
                             "data": data,
+                            "responsive": true,
                             "columns": [
-                                {"data": "ProductID",},
+                                { "data": "ProductID" },
                                 { "data": "ProductName" },
                                 { "data": "Category" },
                                 { "data": "UnitPrice" },
@@ -325,28 +462,42 @@
         //    success: function (res) { console.log("Response: " + res); }
         //});
     }
-    function edit(id)
-    {
+    function edit(id) {
         $.ajax({
             url: "/api/td/Edit/" + id,
             type: "get",
             dataType: "json",
-            success: function (data)
-            {
+            success: function (data) {
                 $("#editModal").modal('toggle');
                 document.getElementById("pid").value = data.ProductID;
                 document.getElementById("pname").value = data.ProductName;
                 document.getElementById("uprice").value = data.UnitPrice;
                 document.getElementById("ustock").value = data.UnitsInStock;
                 document.getElementById("cat").value = data.Category;
-                $("#esubmit").click(function () {
-                    $(`form[id="eform"]`).attr('action', '/Home/Edit');
-                    $(`form[id="eform"]`).submit();
-                });
+
             }
         });
     }
-    
+    function savedata() {
+        $.ajax({
+            url: "/home/Edit",
+            type: "post",
+            dataType: "json",
+            data: $("#eform").serialize(),
+            success: function (data) {
+                $("#editModal").modal('toggle');
+
+                adddata();
+                $("#jstreedemo").jstree('destroy');
+                loadjstree();
+                if (data == 202) {
+                    $("#edited").toast('show');
+                }
+
+            }
+        });
+
+    }
     $("#deleteselected").on("click", function () {
         var a = $('#jstreedemo').jstree("get_selected", true);
         if (confirm("Are you sure you want to delete all the listed items?")) {
@@ -357,10 +508,29 @@
             document.getElementById("deleteselected").style.visibility = "hidden";
             $("#deletedmodal").modal('toggle');
         }
-        
+
     });
-    
-        //function loadpagination()
+    $("#newdataform").submit(function (eve) {
+        eve.preventDefault();
+        $.ajax({
+            url: "/home/index",
+            type: "post",
+            data: $("#newdataform").serialize(),
+            dataType: "json",
+            success: function (data) {
+                $("#exampleModal").modal('toggle');
+
+                adddata();
+                $("#jstreedemo").jstree("destroy");
+                loadjstree();
+                if (data == 202) {
+                    $("#added").toast('show');
+                }
+            }
+        });
+
+    });
+    //function loadpagination()
     //{
     //    $("#pages").css({ "visibility": "" });
     //    $("#nop,#noplabel").css({ "visibility": "" });

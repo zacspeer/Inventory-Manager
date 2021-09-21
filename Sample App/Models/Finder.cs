@@ -11,7 +11,7 @@ namespace Sample_App.Models
         {
             ProductDB db = new ProductDB();
             List<ProductProp> final = new List<ProductProp>();
-            List<ProductProp> item = db.getitems(999);
+            List<ProductProp> item = db.getitems(1,99);
             foreach (ProductProp ele in item)
             {
                 if (ele.ProductName.ToUpper().Contains(key.ToUpper())) { final.Add(ele); }
