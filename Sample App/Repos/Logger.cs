@@ -11,7 +11,7 @@ namespace Sample_App.Repos
 {
     public class Logger:Controller
     {
-        
+        protected TableProperties tableProperties = new TableProperties();
         protected ProductDB db = new ProductDB();
         protected JsTreeData data = new JsTreeData();
         protected List<ProductProp> _nodeinfolist = new List<ProductProp>();

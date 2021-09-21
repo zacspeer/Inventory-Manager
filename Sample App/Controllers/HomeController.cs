@@ -140,14 +140,12 @@ namespace Sample_App.Controllers
         {
             try
             {
-                int drawvalue = Convert.ToInt32(Request["draw"]);
-                int start = Convert.ToInt32(Request["start"]) + 1;
-                int end = Convert.ToInt32(Request["start"]) + Convert.ToInt32(Request["length"]);
-                var sl = Request["length"];
-                string a = Request["order[0][column]"];
-                string direction = Request["order[0][dir]"];
-                string column = Request["columns[" + a + "][name]"];
-                return Json(new { data = db.get(start, end,column,direction), draw = drawvalue, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
+                tableProperties.Draw = Convert.ToInt32(Request["draw"]);
+                tableProperties.Start = Convert.ToInt32(Request["start"]) + 1;
+                tableProperties.End = Convert.ToInt32(Request["start"]) + Convert.ToInt32(Request["length"]);
+                tableProperties.Direction = Request["order[0][dir]"];
+                tableProperties.Column = Request["columns[" + Request["order[0][column]"] + "][name]"];
+                return Json(new { data = db.get(tableProperties), draw = tableProperties.Draw, recordsTotal = db.datacount(), recordsFiltered = db.datacount() }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception ex)

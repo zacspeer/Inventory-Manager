@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
 using System.Text;
+using Sample_App.Repos;
 
 namespace Sample_App.Models
 {
@@ -74,15 +75,15 @@ namespace Sample_App.Models
             connection.Close();
             return count;
         }
-        public List<ProductProp> get(int start, int end,string column, string direction)
+        public List<ProductProp> get(TableProperties tableProperties)
         {
             List<ProductProp> listofitems = new List<ProductProp>();
             connection.Open();
-            SqlCommand command = new SqlCommand(connection: connection, cmdText: "with Temp as (Select ROW_NUMBER() over (order by "+column+" "+direction+") as 'RowNumber', ProductID,ProductName,CategoryID,UnitPrice,UnitsInstock from Product)Select ProductID, ProductName, CategoryID, UnitPrice, UnitsInstock From Temp where RowNumber between @start and @end");
+            SqlCommand command = new SqlCommand(connection: connection, cmdText: "with Temp as (Select ROW_NUMBER() over (order by "+tableProperties.Column+" "+tableProperties.Direction+") as 'RowNumber', ProductID,ProductName,CategoryID,UnitPrice,UnitsInstock from Product)Select ProductID, ProductName, CategoryID, UnitPrice, UnitsInstock From Temp where RowNumber between @start and @end");
             command.CommandType = System.Data.CommandType.Text;
             //command.Parameters.AddWithValue("@colname",sort);
-            command.Parameters.AddWithValue("@start", start);
-            command.Parameters.AddWithValue("@end", end);
+            command.Parameters.AddWithValue("@start", tableProperties.Start);
+            command.Parameters.AddWithValue("@end", tableProperties.End);
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
