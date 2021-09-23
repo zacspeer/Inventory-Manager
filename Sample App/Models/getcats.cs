@@ -12,7 +12,7 @@ namespace Sample_App.Models
         {
             List<int> cats = new List<int>();
             connection.Open();
-            SqlCommand command = new SqlCommand(cmdText: "Cats", connection);
+            SqlCommand command = new SqlCommand(cmdText: "Cats",connection: connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
