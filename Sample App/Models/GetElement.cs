@@ -12,7 +12,7 @@ namespace Sample_App.Models
         public ProductProp element( int id)
         {
             connection.Open();
-            SqlCommand command = new SqlCommand(cmdText: "GetElement", connection);
+            SqlCommand command = new SqlCommand(cmdText: "GetElement",connection: connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
