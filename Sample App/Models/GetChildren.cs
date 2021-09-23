@@ -12,7 +12,7 @@ namespace Sample_App.Models
         {
             connection.Open();
             List<JsTreeChild> final = new List<JsTreeChild>();
-            SqlCommand command = new SqlCommand(cmdText: "CatChildren", connection);
+            SqlCommand command = new SqlCommand(cmdText: "CatChildren",connection: connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
